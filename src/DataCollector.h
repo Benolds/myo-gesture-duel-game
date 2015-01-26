@@ -49,6 +49,8 @@ private:
     // onLock() is called whenever Myo has become locked. No pose events will be sent until the Myo is unlocked again.
     void onLock(myo::Myo* myo, uint64_t timestamp);
     
+    void onAccelerometerData(myo::Myo *myo, uint64_t timestamp, const myo::Vector3<float> &accel);
+    
 public:
     // These values are set by onArmSync() and onArmUnsync() above.
     bool onArm;
@@ -60,6 +62,7 @@ public:
     // These values are set by onOrientationData() and onPose() above.
     int roll_w, pitch_w, yaw_w;
     float roll, pitch, yaw;
+    float accel_x, accel_y, accel_z;
     myo::Pose currentPose;
     
     //int emgVals[8];
@@ -89,6 +92,10 @@ public:
     float getRoll();
     float getPitch();
     float getYaw();
+    
+    float getAccelX();
+    float getAccelY();
+    float getAccelZ();
     
     std::vector<float> getEmgData();
 

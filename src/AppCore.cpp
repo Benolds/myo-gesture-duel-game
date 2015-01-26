@@ -49,6 +49,7 @@ void AppCore::setup(const int numOutChannels, const int numInChannels,
 	// audio processing on
 	pd.start();
 
+
 	// -----------------------------------------------------
 	cout << endl << "BEGIN Patch Test" << endl;
 
@@ -232,6 +233,7 @@ void AppCore::setup(const int numOutChannels, const int numInChannels,
 	pd.addFloat(72);
 	pd.finishList("tone");
 	pd.sendBang("tone");
+    
 
 }
 
@@ -239,13 +241,16 @@ void AppCore::setup(const int numOutChannels, const int numInChannels,
 void AppCore::update() {
 	ofBackground(100, 100, 100);
 
+    /*
 	// update scope array from pd
 	pd.readArray("scope", scopeArray);
+    */
 }
 
 //--------------------------------------------------------------
 void AppCore::draw() {
 
+    /*
 	// draw scope
 	ofSetColor(0, 255, 0);
 	ofSetRectMode(OF_RECTMODE_CENTER);
@@ -255,6 +260,7 @@ void AppCore::draw() {
 		ofLine(x, y+scopeArray[i]*h, x+w, y+scopeArray[i+1]*h);
 		x += w;
 	}
+    */
 }
 
 //--------------------------------------------------------------

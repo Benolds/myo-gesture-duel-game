@@ -119,6 +119,13 @@ void DataCollector::onLock(myo::Myo* myo, uint64_t timestamp)
 {
     isUnlocked = false;
 }
+
+void DataCollector::onAccelerometerData(myo::Myo *myo, uint64_t timestamp, const myo::Vector3<float> &accel)
+{
+    accel_x = accel.x();
+    accel_y = accel.y();
+    accel_z = accel.z();
+}
     
 #pragma mark - Print
     
@@ -189,6 +196,21 @@ float DataCollector::getPitch()
 float DataCollector::getYaw()
 {
     return yaw;
+}
+
+float DataCollector::getAccelX()
+{
+    return accel_x;
+}
+
+float DataCollector::getAccelY()
+{
+    return accel_y;
+}
+
+float DataCollector::getAccelZ()
+{
+    return accel_z;
 }
 
 std::vector<float> DataCollector::getEmgData()

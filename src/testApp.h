@@ -11,14 +11,22 @@
 #pragma once
 
 #include "ofMain.h"
-#include "AppCore.h"
+//#include "AppCore.h"
 #include <myo/myo.hpp>
 #include "DataCollector.h"
+#include "ofxTonic.h"
+
+using namespace Tonic;
 
 /// a desktop os app wrapper
 class testApp : public ofBaseApp{
 
 public:
+    
+    ofxTonicSynth synth;
+    int scaleDegree;
+    void trigger();
+    void setScaleDegreeBasedOnMouseX();
 
     void setup();
     void update();
@@ -35,11 +43,12 @@ public:
     void audioReceived(float * input, int bufferSize, int nChannels);
     void audioRequested(float * output, int bufferSize, int nChannels);
     
-    AppCore core;
+//    AppCore core;
     
 #pragma mark - Myo Custom Methods
     
     void setupMyo();
+    void setupAudio();
     void updateMyo();
     
 #pragma mark - Myo Custom Variables
@@ -49,6 +58,7 @@ public:
     DataCollector collector;
     
     int roll_w, pitch_w, yaw_w;
+    float accel_x, accel_y, accel_z;
     float roll, pitch, yaw;
     std::vector<float> emgVals;
 };
