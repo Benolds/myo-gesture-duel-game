@@ -22,7 +22,7 @@
 		<key>66E9B4555ED4C2855080B5002CF7D0F792C69EF1</key>
 		<string>../..</string>
 		<key>94B904776FBE35C7CEDEF599372319D63A1BA8B7</key>
-		<string>../../../../../addons/ofxTonic</string>
+		<string>../../../addons/ofxTonic</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>github.mit.edu:benolds/myo-music-gen.git</string>

@@ -108,12 +108,14 @@ void testApp::setupAudio(){
     
     // It's just a steady tone until we modulate the amplitude with an envelope
     ControlGenerator envelopeTrigger = synth.addParameter("trigger");
-    Generator toneWithEnvelope = tone * ADSR().attack(0.01).decay(1.5).sustain(0).release(0).trigger(envelopeTrigger).legato(true);
+//    Generator toneWithEnvelope = tone * ADSR().attack(0.01).decay(1.5).sustain(0).release(0).trigger(envelopeTrigger).legato(true);
+    Generator toneWithEnvelope = tone * ADSR().attack(0.0).decay(0.1).sustain(0).release(0).trigger(envelopeTrigger).legato(true);
+
     
-    // let's send the tone through some delay
-    Generator toneWithDelay = StereoDelay(0.5, 0.75).input(toneWithEnvelope).wetLevel(0.1).feedback(0.2);
+//    // let's send the tone through some delay
+//    Generator toneWithDelay = StereoDelay(0.5, 0.75).input(toneWithEnvelope).wetLevel(0.1).feedback(0.2);
     
-    synth.setOutputGen( toneWithDelay );
+    synth.setOutputGen( toneWithEnvelope ); //toneWithDelay );
 }
 
 //--------------------------------------------------------------
@@ -123,10 +125,19 @@ void testApp::update() {
     this->updateMyo();
     
     scaleDegree = (roll + PI/2) / PI * NUMBER_OF_KEYS;
-    printf("scaleDegree: %i\n", scaleDegree);
+//    printf("scaleDegree: %i\n", scaleDegree);
 }
 
 void testApp::updateMyo() {
+    
+    time++;
+    if (time > ofGetWindowWidth() - 200) {
+        time = 0;
+        accelXValues.clear();
+        accelYValues.clear();
+        accelZValues.clear();
+    }
+    
     try {
         // In each iteration of our main loop, we run the Myo event loop for a set number of milliseconds.
         // In this case, we wish to update our display 20 times a second, so we run for 1000/20 milliseconds.
@@ -144,9 +155,27 @@ void testApp::updateMyo() {
 //        printf("pitch: %f\n", pitch);
 //        printf("yaw: %f\n", yaw);
         
+        d_accel_x = collector.getAccelX() - accel_x;
+        d_accel_y = collector.getAccelY() - accel_y;
+        d_accel_z = collector.getAccelZ() - accel_z;
+        
+        float dlimit = 1.1f;
+        if (abs(d_accel_x) > dlimit || abs(d_accel_y) > dlimit || abs(d_accel_z) > dlimit )
+        {
+            printf("\ndx: %f\n", d_accel_x);
+            printf("dy: %f\n", d_accel_y);
+            printf("dz: %f\n", d_accel_z);
+            
+            this->trigger();
+        }
+        
         accel_x = collector.getAccelX();
         accel_y = collector.getAccelY();
         accel_z = collector.getAccelZ();
+        
+        accelXValues.push_back(accel_x);
+        accelYValues.push_back(accel_y);
+        accelZValues.push_back(accel_z);
         
         float limit = 1.1f;
         if (abs(accel_x) > limit || abs(accel_y) > limit || abs(accel_z) > limit )
@@ -154,12 +183,9 @@ void testApp::updateMyo() {
             printf("\nx: %f\n", accel_x);
             printf("y: %f\n", accel_y);
             printf("z: %f\n", accel_z);
-            
-            this->trigger();
         }
 
         emgVals = collector.getEmgData();
-        
         
         //if (emgVals.size() > 0) {
         //printf("len = %i", emgVals.size());
@@ -181,9 +207,10 @@ void testApp::updateMyo() {
 void testApp::trigger(){
     static int twoOctavePentatonicScale[10] = {0, 2, 4, 7, 9, 12, 14, 16, 19, 21};
     int degreeToTrigger = floor(ofClamp(scaleDegree, 0, 9));
+    cout << "degreeToTrigger = " << degreeToTrigger << endl;
     
     // set a parameter that we created when we defined the synth
-    synth.setParameter("midiNumber", 44 + twoOctavePentatonicScale[degreeToTrigger]);
+    synth.setParameter("midiNumber", 30); //44 + twoOctavePentatonicScale[degreeToTrigger]);
     
     // simply setting the value of a parameter causes that parameter to send a "trigger" message to any
     // using them as triggers
@@ -204,6 +231,34 @@ void testApp::setScaleDegreeBasedOnMouseX(){
 //--------------------------------------------------------------
 void testApp::draw() {
 //	core.draw();
+    
+    ofSetColor(ofColor::white);
+    ofCircle(30, 30, accel_x * 10);
+    ofCircle(60, 30, accel_y * 10);
+    ofCircle(90, 30, accel_z * 10);
+    
+    ofCircle(130, 30, roll * 10);
+    ofCircle(160, 30, pitch * 10);
+    ofCircle(190, 30, yaw * 10);
+    
+    
+    //ofLine(10 + (time-1), 10 + 10 * (accel_x-d_accel_x), 10 + time, 10 + 10 * accel_x);
+    
+    float amplitude = 10.0f;
+    float margin = 100.0f;
+    float axisMargin = 100.0f;
+    for (int i = 0; i < time-1; i++) {
+        // plot x accel values
+        ofLine(margin + i, 0*axisMargin + margin + amplitude * accelXValues[i], margin + i+1, 0*axisMargin + margin + amplitude * accelXValues[i+1]);
+        
+        // plot y accel values
+        ofLine(margin + i, 1*axisMargin + margin + amplitude * accelYValues[i], margin + i+1, 1*axisMargin + margin + amplitude * accelYValues[i+1]);
+
+        // plot z accel values
+        ofLine(margin + i, 2*axisMargin + margin + amplitude * accelZValues[i], margin + i+1, 2*axisMargin + margin + amplitude * accelZValues[i+1]);
+
+    }
+    
 }
 
 //--------------------------------------------------------------

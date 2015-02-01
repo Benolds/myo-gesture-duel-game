@@ -59,6 +59,12 @@ public:
     
     int roll_w, pitch_w, yaw_w;
     float accel_x, accel_y, accel_z;
+    float d_accel_x, d_accel_y, d_accel_z;
+    int time;
     float roll, pitch, yaw;
     std::vector<float> emgVals;
+    std::vector<float> accelXValues;
+    std::vector<float> accelYValues;
+    std::vector<float> accelZValues;
+    
 };
