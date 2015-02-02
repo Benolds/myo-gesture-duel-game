@@ -982,10 +982,10 @@
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
 				E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* testApp.h */,
-				ED69EA839980FEAC69FB72F1 /* AppCore.cpp */,
-				2EECCB7DC6390C5F14543C6D /* AppCore.h */,
 				5DCDF0B91A68B84E0009B2BA /* DataCollector.cpp */,
 				5DCDF0BA1A68B84E0009B2BA /* DataCollector.h */,
+				ED69EA839980FEAC69FB72F1 /* AppCore.cpp */,
+				2EECCB7DC6390C5F14543C6D /* AppCore.h */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;

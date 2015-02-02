@@ -19,7 +19,7 @@ class DataCollector : public myo::DeviceListener {
 private:
 #pragma mark - Event Listeners
     
-    //void onPair(myo::Myo* myo, uint64_t timestamp, myo::FirmwareVersion firmwareVersion);
+    void onPair(myo::Myo* myo, uint64_t timestamp, myo::FirmwareVersion firmwareVersion);
     
     // onUnpair() is called whenever the Myo is disconnected from Myo Connect by the user.
     void onUnpair(myo::Myo* myo, uint64_t timestamp);
@@ -54,13 +54,15 @@ private:
 public:
     // These values are set by onArmSync() and onArmUnsync() above.
     bool onArm;
-    myo::Arm whichArm;
+//    myo::Arm whichArm;
+    myo::Arm arm1;
+    myo::Arm arm2;
     
     // This is set by onUnlocked() and onLocked() above.
     bool isUnlocked;
     
     // These values are set by onOrientationData() and onPose() above.
-    int roll_w, pitch_w, yaw_w;
+//    int roll_w, pitch_w, yaw_w;
     float roll, pitch, yaw;
     float accel_x, accel_y, accel_z;
     myo::Pose currentPose;
@@ -69,11 +71,14 @@ public:
     std::vector<float> emgVals;
     
     DataCollector()
-    : onArm(false), isUnlocked(false), roll_w(0), pitch_w(0), yaw_w(0), currentPose()
+    : onArm(false), isUnlocked(false), /*roll_w(0), pitch_w(0), yaw_w(0),*/ currentPose()
     {
     }
     
     void setupDataCollector();
+    
+    std::vector<myo::Myo*> knownMyos;
+    size_t identifyMyo(myo::Myo* myo);
     
 #pragma mark - Print
     
@@ -85,19 +90,21 @@ public:
     
 #pragma mark - Getters
     
-    int getRoll_W();
-    int getPitch_W();
-    int getYaw_W();
+//    int getRoll_W();
+//    int getPitch_W();
+//    int getYaw_W();
     
-    float getRoll();
-    float getPitch();
-    float getYaw();
+    float getRoll(myo::Arm);
+    float getPitch(myo::Arm);
+    float getYaw(myo::Arm);
     
-    float getAccelX();
-    float getAccelY();
-    float getAccelZ();
+    float getAccelX(myo::Arm);
+    float getAccelY(myo::Arm);
+    float getAccelZ(myo::Arm);
     
     std::vector<float> getEmgData();
+    
+    myo::Arm getArmForInt(int myoNumber);
 
 };
 

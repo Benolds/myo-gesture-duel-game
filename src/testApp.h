@@ -43,6 +43,8 @@ public:
     void audioReceived(float * input, int bufferSize, int nChannels);
     void audioRequested(float * output, int bufferSize, int nChannels);
     
+    size_t identifyMyo(myo::Myo* myo);
+    
 //    AppCore core;
     
 #pragma mark - Myo Custom Methods
@@ -54,7 +56,9 @@ public:
 #pragma mark - Myo Custom Variables
     
     myo::Hub* hub;
-    myo::Myo* myo;
+//    myo::Myo* myo;
+    std::vector<myo::Myo*> knownMyos;
+
     DataCollector collector;
     
     int roll_w, pitch_w, yaw_w;
