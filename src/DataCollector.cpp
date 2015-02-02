@@ -67,27 +67,32 @@ void DataCollector::onUnpair(myo::Myo* myo, uint64_t timestamp)
 // as a unit quaternion.
 void DataCollector::onOrientationData(myo::Myo* myo, uint64_t timestamp, const myo::Quaternion<float>& quat)
 {
-    if (this->getArmForInt(identifyMyo(myo)) == myo::armLeft) {
+    using std::atan2;
+    using std::asin;
+    using std::sqrt;
+    using std::max;
+    using std::min;
+    
+    if (identifyMyo(myo) == 1) {
 
-        using std::atan2;
-        using std::asin;
-        using std::sqrt;
-        using std::max;
-        using std::min;
-        
         // Calculate Euler angles (roll, pitch, and yaw) from the unit quaternion.
-        roll = atan2(2.0f * (quat.w() * quat.x() + quat.y() * quat.z()),
+        roll1 = atan2(2.0f * (quat.w() * quat.x() + quat.y() * quat.z()),
                            1.0f - 2.0f * (quat.x() * quat.x() + quat.y() * quat.y()));
-        pitch = asin(max(-1.0f, min(1.0f, 2.0f * (quat.w() * quat.y() - quat.z() * quat.x()))));
-        yaw = atan2(2.0f * (quat.w() * quat.z() + quat.x() * quat.y()),
+        pitch1 = asin(max(-1.0f, min(1.0f, 2.0f * (quat.w() * quat.y() - quat.z() * quat.x()))));
+        yaw1 = atan2(2.0f * (quat.w() * quat.z() + quat.x() * quat.y()),
                           1.0f - 2.0f * (quat.y() * quat.y() + quat.z() * quat.z()));
     
+    } else {
+        
+        // Calculate Euler angles (roll, pitch, and yaw) from the unit quaternion.
+        roll2 = atan2(2.0f * (quat.w() * quat.x() + quat.y() * quat.z()),
+                      1.0f - 2.0f * (quat.x() * quat.x() + quat.y() * quat.y()));
+        pitch2 = asin(max(-1.0f, min(1.0f, 2.0f * (quat.w() * quat.y() - quat.z() * quat.x()))));
+        yaw2 = atan2(2.0f * (quat.w() * quat.z() + quat.x() * quat.y()),
+                     1.0f - 2.0f * (quat.y() * quat.y() + quat.z() * quat.z()));
+        
     }
     
-    // Convert the floating point angles in radians to a scale from 0 to 18.
-//    roll_w = static_cast<int>((roll + (float)M_PI)/(M_PI * 2.0f) * 18);
-//    pitch_w = static_cast<int>((pitch + (float)M_PI/2.0f)/M_PI * 18);
-//    yaw_w = static_cast<int>((yaw + (float)M_PI)/(M_PI * 2.0f) * 18);
 }
     
 // onPose() is called whenever the Myo detects that the person wearing it has changed their pose, for example,
@@ -179,90 +184,34 @@ void DataCollector::onAccelerometerData(myo::Myo *myo, uint64_t timestamp, const
     }
 }
 
-#pragma mark - Print
-    
-// There are other virtual functions in DeviceListener that we could override here, like onAccelerometerData().
-// For this example, the functions overridden above are sufficient.
-
-// We define this function to print the current values that were updated by the on...() functions above.
-void DataCollector::print()
-{
-    // Clear the current line
-    std::cout << '\r';
-    
-    // Print out the orientation. Orientation data is always available, even if no arm is currently recognized.
-//    std::cout << '[' << std::string(roll_w, '*') << std::string(18 - roll_w, ' ') << ']'
-//    << '[' << std::string(pitch_w, '*') << std::string(18 - pitch_w, ' ') << ']'
-//    << '[' << std::string(yaw_w, '*') << std::string(18 - yaw_w, ' ') << ']';
-    
-    //std::cout << 'emg:[' << std::to_string(emgVals[0]) << ']';
-    
-    if (onArm) {
-        // Print out the lock state, the currently recognized pose, and which arm Myo is being worn on.
-        
-        // Pose::toString() provides the human-readable name of a pose. We can also output a Pose directly to an
-        // output stream (e.g. std::cout << currentPose;). In this case we want to get the pose name's length so
-        // that we can fill the rest of the field with spaces below, so we obtain it as a string using toString().
-        std::string poseString = currentPose.toString();
-        
-        std::cout << '[' << (isUnlocked ? "unlocked" : "locked  ") << ']'
-//        << '[' << (whichArm == myo::armLeft ? "L" : "R") << ']'
-        << '[' << poseString << std::string(14 - poseString.size(), ' ') << ']';
-    } else {
-        // Print out a placeholder for the arm and pose when Myo doesn't currently know which arm it's on.
-        std::cout << '[' << std::string(8, ' ') << ']' << "[?]" << '[' << std::string(14, ' ') << ']';
-    }
-    
-    std::cout << std::flush;
-}
-
 #pragma mark - Getters
 
-//// Integer Roll/PitchYaw on scale of 0 to 18
-//int DataCollector::getRoll_W()
-//{
-//    return roll_w;
-//}
-//
-//int DataCollector::getPitch_W()
-//{
-//    return pitch_w;
-//}
-//
-//int DataCollector::getYaw_W()
-//{
-//    return yaw_w;
-//}
-
 // Float Roll/Pitch/Yaw on scale of -PI to PI
-float DataCollector::getRoll(myo::Arm)
+float DataCollector::getRoll(int playerNumber)
 {
-    return roll;
+    if (playerNumber == 1) {
+        return roll1;
+    } else {
+        return roll2;
+    }
 }
 
-float DataCollector::getPitch(myo::Arm)
+float DataCollector::getPitch(int playerNumber)
 {
-    return pitch;
+    if (playerNumber == 1) {
+        return pitch1;
+    } else {
+        return pitch2;
+    }
 }
 
-float DataCollector::getYaw(myo::Arm)
+float DataCollector::getYaw(int playerNumber)
 {
-    return yaw;
-}
-
-float DataCollector::getAccelX(myo::Arm)
-{
-    return accel_x;
-}
-
-float DataCollector::getAccelY(myo::Arm)
-{
-    return accel_y;
-}
-
-float DataCollector::getAccelZ(myo::Arm)
-{
-    return accel_z;
+    if (playerNumber == 1) {
+        return yaw1;
+    } else {
+        return yaw2;
+    }
 }
 
 std::vector<float> DataCollector::getEmgData()

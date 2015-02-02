@@ -63,7 +63,9 @@ public:
     
     // These values are set by onOrientationData() and onPose() above.
 //    int roll_w, pitch_w, yaw_w;
-    float roll, pitch, yaw;
+    float roll1, pitch1, yaw1;
+    float roll2, pitch2, yaw2;
+    
     float accel_x, accel_y, accel_z;
     myo::Pose currentPose;
     
@@ -90,17 +92,9 @@ public:
     
 #pragma mark - Getters
     
-//    int getRoll_W();
-//    int getPitch_W();
-//    int getYaw_W();
-    
-    float getRoll(myo::Arm);
-    float getPitch(myo::Arm);
-    float getYaw(myo::Arm);
-    
-    float getAccelX(myo::Arm);
-    float getAccelY(myo::Arm);
-    float getAccelZ(myo::Arm);
+    float getRoll(int playerNumber);
+    float getPitch(int playerNumber);
+    float getYaw(int playerNumber);
     
     std::vector<float> getEmgData();
     

@@ -14,20 +14,12 @@
 //#include "AppCore.h"
 #include <myo/myo.hpp>
 #include "DataCollector.h"
-#include "ofxTonic.h"
-
-using namespace Tonic;
 
 /// a desktop os app wrapper
 class testApp : public ofBaseApp{
 
 public:
     
-    ofxTonicSynth synth;
-    int scaleDegree;
-    void trigger();
-    void setScaleDegreeBasedOnMouseX();
-
     void setup();
     void update();
     void draw();
@@ -40,13 +32,6 @@ public:
     void mouseReleased(int x, int y, int button);
     void windowResized(int w, int h);
     
-    void audioReceived(float * input, int bufferSize, int nChannels);
-    void audioRequested(float * output, int bufferSize, int nChannels);
-    
-    size_t identifyMyo(myo::Myo* myo);
-    
-//    AppCore core;
-    
 #pragma mark - Myo Custom Methods
     
     void setupMyo();
@@ -56,9 +41,7 @@ public:
 #pragma mark - Myo Custom Variables
     
     myo::Hub* hub;
-//    myo::Myo* myo;
     std::vector<myo::Myo*> knownMyos;
-
     DataCollector collector;
     
     int roll_w, pitch_w, yaw_w;
@@ -70,5 +53,19 @@ public:
     std::vector<float> accelXValues;
     std::vector<float> accelYValues;
     std::vector<float> accelZValues;
+    
+    void drawAccelTimeline();
+    
+#pragma mark - Game Logic
+    
+    void chooseNewPosition();
+    int determineWinner();
+    float goalRoll, goalPitch, goalYaw;
+    
+    int maxTime;
+    int timeLeft;
+    
+    int wins1, wins2;
+    int prevWinner;
     
 };
